@@ -12,7 +12,9 @@ class _HomeState extends State<Home> {
   bool isShowing = false;
   String currentPlayer = "circle";
   List<List<String>> board = [
-    [null, null, null]
+    [null, null, null],
+    [null, null, null],
+    [null, null, null],
   ];
 
   @override
@@ -34,30 +36,78 @@ class _HomeState extends State<Home> {
     }
 
     void handleSelection(row, column) {
-      print("row " + row.toString());
-      print("column " + column.toString());
-
       setState(() {
         board[row][column] = currentPlayer;
         changePlayer();
       });
     }
 
-    List<Widget> renderBoard() {
+    BoxDecoration calculateBoxDecoration(
+        int row, int column, int maxRow, int maxColumn) {
+      BoxDecoration boxDecoration;
+      BorderSide borderSide = BorderSide(color: Colors.grey, width: 1);
+
+      if (row == 0) {
+        if (column == 0) {
+          boxDecoration = BoxDecoration(
+              border: Border(right: borderSide, bottom: borderSide));
+        } else if (column == maxColumn) {
+          boxDecoration = BoxDecoration(border: Border(bottom: borderSide));
+        } else {
+          boxDecoration = BoxDecoration(
+              border: Border(bottom: borderSide, right: borderSide));
+        }
+      } else if (row == maxRow) {
+        if (column == 0) {
+          boxDecoration = BoxDecoration(
+              border: Border(
+            right: borderSide,
+          ));
+        } else if (column == maxColumn) {
+          boxDecoration = BoxDecoration(border: Border());
+        } else {
+          boxDecoration = BoxDecoration(
+            border: Border(right: borderSide),
+          );
+        }
+      } else {
+        if (column == 0) {
+          boxDecoration = BoxDecoration(
+              border: Border(right: borderSide, bottom: borderSide));
+        } else if (column == maxColumn) {
+          boxDecoration = BoxDecoration(border: Border(bottom: borderSide));
+        } else {
+          boxDecoration = BoxDecoration(
+              border: Border(bottom: borderSide, right: borderSide));
+        }
+      }
+
+      return boxDecoration;
+    }
+
+    List<Widget> renderBoard(BoxConstraints constraints) {
       List<Widget> finalItems = [];
+
+      final double size = constraints.maxWidth / board[0].length;
 
       for (int i = 0; i < board.length; i++) {
         List<String> row = board[i];
         List<Widget> items = [];
 
         for (int j = 0; j < row.length; j++) {
+          BoxDecoration boxDecoration =
+              calculateBoxDecoration(i, j, board.length - 1, row.length - 1);
+
           items.add(TicItem(
+            size: size,
+            boxDecoration: boxDecoration,
             onTap: () => handleSelection(i, j),
             type: row[j],
           ));
         }
 
         finalItems.add(Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: items,
         ));
       }
@@ -79,10 +129,19 @@ class _HomeState extends State<Home> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Colors.black,
-                    fontSize: 24,
+                    fontSize: 30,
                     fontWeight: FontWeight.bold),
               ),
-              ...renderBoard()
+              Container(
+                margin: const EdgeInsets.only(top: 20),
+                child: LayoutBuilder(builder:
+                    (BuildContext context, BoxConstraints constraints) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: renderBoard(constraints),
+                  );
+                }),
+              )
             ],
           ),
         ),

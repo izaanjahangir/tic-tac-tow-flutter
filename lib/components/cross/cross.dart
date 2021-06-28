@@ -14,7 +14,7 @@ class _CrossState extends State<Cross> with SingleTickerProviderStateMixin {
     super.initState();
 
     _controller =
-        AnimationController(duration: Duration(milliseconds: 600), vsync: this);
+        AnimationController(duration: Duration(milliseconds: 200), vsync: this);
 
     _animation = Tween(begin: 0.0, end: 1.0).animate(_controller)
       ..addListener(() {
@@ -28,17 +28,13 @@ class _CrossState extends State<Cross> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 50,
-      height: 50,
-      child: Center(
-        child: AspectRatio(
-          aspectRatio: 1.0,
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: CustomPaint(
-              painter: CirclePainter(fraction: _fraction),
-            ),
+    return Center(
+      child: AspectRatio(
+        aspectRatio: 1.0,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: CustomPaint(
+            painter: CirclePainter(fraction: _fraction),
           ),
         ),
       ),
@@ -60,7 +56,7 @@ class CirclePainter extends CustomPainter {
     _crossPaint = Paint()
       ..color = Colors.red
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0
+      ..strokeWidth = 3.0
       ..strokeCap = StrokeCap.round;
   }
 

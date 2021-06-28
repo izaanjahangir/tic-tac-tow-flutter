@@ -5,8 +5,11 @@ import 'package:tic_tac_toe/components/cross/cross.dart';
 class TicItem extends StatelessWidget {
   final String type;
   final Function onTap;
+  final double size;
+  final BoxDecoration boxDecoration;
 
-  TicItem({this.type, @required this.onTap});
+  TicItem(
+      {this.type, @required this.onTap, this.size = 50, this.boxDecoration});
 
   @override
   Widget build(BuildContext context) {
@@ -22,11 +25,24 @@ class TicItem extends StatelessWidget {
       return null;
     }
 
+    BoxDecoration getContainerDecoration() {
+      BoxDecoration defaultBoxDecoration =
+          BoxDecoration(border: Border.all(color: Colors.grey, width: 1));
+      BoxDecoration clonedDecoration =
+          boxDecoration == null ? BoxDecoration() : boxDecoration;
+
+      BoxDecoration finalDecoration = defaultBoxDecoration.copyWith(
+          border: clonedDecoration.border == null
+              ? defaultBoxDecoration.border
+              : clonedDecoration.border);
+
+      return finalDecoration;
+    }
+
     return Container(
-      width: 50,
-      height: 50,
-      decoration:
-          BoxDecoration(border: Border.all(color: Colors.grey, width: 1)),
+      width: size > 100 ? 100 : size,
+      height: size > 100 ? 100 : size,
+      decoration: getContainerDecoration(),
       child: GestureDetector(
         onTap: onTap,
         child: renderSymbol(),
