@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tic_tac_toe/components/circle/circle.dart';
-import 'package:tic_tac_toe/components/cross/cross.dart';
 import 'package:tic_tac_toe/components/tic_item/tic_item.dart';
 
 class Home extends StatefulWidget {
@@ -19,6 +17,8 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+
     void changePlayer() {
       String newPlayer;
 
@@ -129,11 +129,11 @@ class _HomeState extends State<Home> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Colors.black,
-                    fontSize: 30,
+                    fontSize: width * 0.07 > 60 ? 60 : width * 0.07,
                     fontWeight: FontWeight.bold),
               ),
               Container(
-                margin: const EdgeInsets.only(top: 20),
+                margin: const EdgeInsets.only(top: 40),
                 child: LayoutBuilder(builder:
                     (BuildContext context, BoxConstraints constraints) {
                   return Column(
