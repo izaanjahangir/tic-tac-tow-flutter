@@ -45,7 +45,7 @@ class _HomeState extends State<Home> {
     BoxDecoration calculateBoxDecoration(
         int row, int column, int maxRow, int maxColumn) {
       BoxDecoration boxDecoration;
-      BorderSide borderSide = BorderSide(color: Colors.grey, width: 1);
+      BorderSide borderSide = BorderSide(color: Colors.grey, width: 2);
 
       if (row == 0) {
         if (column == 0) {
@@ -129,7 +129,7 @@ class _HomeState extends State<Home> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Colors.black,
-                    fontSize: width * 0.07 > 60 ? 60 : width * 0.07,
+                    fontSize: width * 0.1 > 60 ? 60 : width * 0.1,
                     fontWeight: FontWeight.bold),
               ),
               Container(
