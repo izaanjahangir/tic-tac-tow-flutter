@@ -40,8 +40,8 @@ class TicItem extends StatelessWidget {
     }
 
     return Container(
-      width: size > 200 ? 200 : size,
-      height: size > 200 ? 200 : size,
+      width: size > 170 ? 170 : size,
+      height: size > 170 ? 170 : size,
       decoration: getContainerDecoration(),
       child: GestureDetector(
         onTap: onTap,

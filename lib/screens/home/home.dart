@@ -7,12 +7,32 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  bool isShowing = false;
+  // bool isShowing = false;
+  bool isGameEnded = false;
+  String wonPlayer = null;
   String currentPlayer = "circle";
   List<List<String>> board = [
     [null, null, null],
     [null, null, null],
     [null, null, null],
+  ];
+
+  List<List<List<int>>> winningConditions = [
+    [
+      [0, 0],
+      [0, 1],
+      [0, 2],
+    ],
+    [
+      [1, 0],
+      [1, 1],
+      [1, 2],
+    ],
+    [
+      [2, 0],
+      [2, 1],
+      [2, 2],
+    ]
   ];
 
   @override
@@ -35,10 +55,49 @@ class _HomeState extends State<Home> {
       });
     }
 
+    void win() {
+      setState(() {
+        wonPlayer = currentPlayer;
+        isGameEnded = true;
+      });
+    }
+
+    void checkWinningState() {
+      print("Starting winning check");
+      for (int i = 0; i < winningConditions.length; i++) {
+        List element = winningConditions[i];
+
+        int correctCount = 0;
+
+        for (int j = 0; j < element.length; j++) {
+          print("Starting Conditon check...");
+          List<int> condition = element[j];
+          int col = condition[0];
+          int row = condition[1];
+          print("currentPlayer: " + currentPlayer);
+          print("col: " + col.toString());
+          print("row: " + row.toString());
+
+          if (board[col][row] == currentPlayer) {
+            correctCount++;
+          } else {
+            break;
+          }
+        }
+
+        if (correctCount == 3) {
+          win();
+          break;
+        }
+      }
+
+      changePlayer();
+    }
+
     void handleSelection(row, column) {
       setState(() {
         board[row][column] = currentPlayer;
-        changePlayer();
+        checkWinningState();
       });
     }
 
@@ -136,9 +195,12 @@ class _HomeState extends State<Home> {
                 margin: const EdgeInsets.only(top: 40),
                 child: LayoutBuilder(builder:
                     (BuildContext context, BoxConstraints constraints) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: renderBoard(constraints),
+                  return AbsorbPointer(
+                    absorbing: isGameEnded,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: renderBoard(constraints),
+                    ),
                   );
                 }),
               )
