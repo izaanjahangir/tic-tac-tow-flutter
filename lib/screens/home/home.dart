@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:tic_tac_toe/components/tic_item/tic_item.dart';
 
 class Home extends StatefulWidget {
@@ -32,12 +33,50 @@ class _HomeState extends State<Home> {
       [2, 0],
       [2, 1],
       [2, 2],
+    ],
+    [
+      [0, 0],
+      [1, 0],
+      [2, 0],
+    ],
+    [
+      [0, 1],
+      [1, 1],
+      [2, 1],
+    ],
+    [
+      [0, 2],
+      [1, 2],
+      [2, 2],
+    ],
+    [
+      [0, 0],
+      [1, 1],
+      [2, 2],
+    ],
+    [
+      [0, 2],
+      [1, 1],
+      [2, 0],
     ]
   ];
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+
+    void startGame() {
+      setState(() {
+        isGameEnded = false;
+        wonPlayer = null;
+        currentPlayer = "circle";
+        board = [
+          [null, null, null],
+          [null, null, null],
+          [null, null, null],
+        ];
+      });
+    }
 
     void changePlayer() {
       String newPlayer;
@@ -56,6 +95,25 @@ class _HomeState extends State<Home> {
     }
 
     void win() {
+      Alert(
+        context: context,
+        type: AlertType.success,
+        title: currentPlayer + " won",
+        buttons: [
+          DialogButton(
+            child: Text(
+              "Restart game",
+              style: TextStyle(color: Colors.white, fontSize: 16),
+            ),
+            onPressed: () {
+              startGame();
+              Navigator.pop(context);
+            },
+            width: 120,
+          )
+        ],
+      ).show();
+
       setState(() {
         wonPlayer = currentPlayer;
         isGameEnded = true;
@@ -63,20 +121,15 @@ class _HomeState extends State<Home> {
     }
 
     void checkWinningState() {
-      print("Starting winning check");
       for (int i = 0; i < winningConditions.length; i++) {
         List element = winningConditions[i];
 
         int correctCount = 0;
 
         for (int j = 0; j < element.length; j++) {
-          print("Starting Conditon check...");
           List<int> condition = element[j];
           int col = condition[0];
           int row = condition[1];
-          print("currentPlayer: " + currentPlayer);
-          print("col: " + col.toString());
-          print("row: " + row.toString());
 
           if (board[col][row] == currentPlayer) {
             correctCount++;
@@ -95,10 +148,12 @@ class _HomeState extends State<Home> {
     }
 
     void handleSelection(row, column) {
-      setState(() {
-        board[row][column] = currentPlayer;
-        checkWinningState();
-      });
+      if (board[row][column] == null) {
+        setState(() {
+          board[row][column] = currentPlayer;
+          checkWinningState();
+        });
+      }
     }
 
     BoxDecoration calculateBoxDecoration(
