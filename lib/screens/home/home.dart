@@ -96,6 +96,7 @@ class _HomeState extends State<Home> {
 
     void win() {
       Alert(
+        style: AlertStyle(animationType: AnimationType.grow),
         context: context,
         type: AlertType.success,
         title: currentPlayer + " won",
