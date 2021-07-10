@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tic_tac_toe/config/theme_colors.dart';
 
 class Cross extends StatefulWidget {
+  final double stroke;
+  Cross({this.stroke = 3});
+
   @override
   _CrossState createState() => _CrossState();
 }
@@ -34,7 +38,7 @@ class _CrossState extends State<Cross> with SingleTickerProviderStateMixin {
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: CustomPaint(
-            painter: CirclePainter(fraction: _fraction),
+            painter: CirclePainter(fraction: _fraction, stroke: widget.stroke),
           ),
         ),
       ),
@@ -50,13 +54,14 @@ class _CrossState extends State<Cross> with SingleTickerProviderStateMixin {
 
 class CirclePainter extends CustomPainter {
   final double fraction;
+  final double stroke;
   var _crossPaint;
 
-  CirclePainter({this.fraction}) {
+  CirclePainter({this.fraction, this.stroke}) {
     _crossPaint = Paint()
-      ..color = Colors.red
+      ..color = ThemeColors.themeSecondaryLight
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.0
+      ..strokeWidth = stroke
       ..strokeCap = StrokeCap.round;
   }
 

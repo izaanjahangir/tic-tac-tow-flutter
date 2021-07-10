@@ -1,8 +1,12 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:tic_tac_toe/config/theme_colors.dart';
 
 class Circle extends StatefulWidget {
+  final double stroke;
+  Circle({this.stroke = 3});
+
   @override
   _CircleState createState() => _CircleState();
 }
@@ -37,7 +41,7 @@ class _CircleState extends State<Circle> with SingleTickerProviderStateMixin {
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: CustomPaint(
-            painter: CirclePainter(fraction: _fraction),
+            painter: CirclePainter(fraction: _fraction, stroke: widget.stroke),
           ),
         ),
       ),
@@ -53,13 +57,14 @@ class _CircleState extends State<Circle> with SingleTickerProviderStateMixin {
 
 class CirclePainter extends CustomPainter {
   final double fraction;
+  final double stroke;
   var _circlePaint;
 
-  CirclePainter({this.fraction}) {
+  CirclePainter({this.fraction, this.stroke}) {
     _circlePaint = Paint()
-      ..color = Colors.red
+      ..color = ThemeColors.themeSecondaryLight
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.0
+      ..strokeWidth = stroke
       ..strokeCap = StrokeCap.round;
   }
 

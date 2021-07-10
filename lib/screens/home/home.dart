@@ -1,6 +1,10 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:tic_tac_toe/components/app_header/app_header.dart';
 import 'package:tic_tac_toe/components/tic_item/tic_item.dart';
+import 'package:tic_tac_toe/config/theme_colors.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -95,25 +99,33 @@ class _HomeState extends State<Home> {
     }
 
     void win() {
-      Alert(
-        style: AlertStyle(animationType: AnimationType.grow),
-        context: context,
-        type: AlertType.success,
-        title: currentPlayer + " won",
-        buttons: [
-          DialogButton(
-            child: Text(
-              "Restart game",
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
-            onPressed: () {
-              startGame();
-              Navigator.pop(context);
-            },
-            width: 120,
-          )
-        ],
-      ).show();
+      // showDialog(
+      //     context: context,
+      //     builder: (BuildContext context) {
+      //       return Dialog(
+      //         insetAnimationDuration: Duration(milliseconds: 50000),
+      //         child: Container(width: 50, height: 50, color: Colors.white),
+      //       );
+      //     });
+      // Alert(
+      //   style: AlertStyle(animationType: AnimationType.grow),
+      //   context: context,
+      //   type: AlertType.success,
+      //   title: currentPlayer + " won",
+      //   buttons: [
+      //     DialogButton(
+      //       child: Text(
+      //         "Restart game",
+      //         style: TextStyle(color: Colors.white, fontSize: 16),
+      //       ),
+      //       onPressed: () {
+      //         startGame();
+      //         Navigator.pop(context);
+      //       },
+      //       width: 120,
+      //     )
+      //   ],
+      // ).show();
 
       setState(() {
         wonPlayer = currentPlayer;
@@ -233,36 +245,96 @@ class _HomeState extends State<Home> {
     return Scaffold(
       body: SafeArea(
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          width: double.infinity,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Tic Tac Toe",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: width * 0.1 > 60 ? 60 : width * 0.1,
-                    fontWeight: FontWeight.bold),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 40),
-                child: LayoutBuilder(builder:
-                    (BuildContext context, BoxConstraints constraints) {
-                  return AbsorbPointer(
-                    absorbing: isGameEnded,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: renderBoard(constraints),
+            width: double.infinity,
+            color: ThemeColors.themePrimaryDark,
+            child: Stack(
+              children: [
+                Column(
+                  children: [
+                    AppHeader(currentPlayer: currentPlayer),
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Tic Tac Toe",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: ThemeColors.themeSecondaryLight,
+                                  fontSize: width * 0.1 > 60 ? 60 : width * 0.1,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 40),
+                              child: LayoutBuilder(builder:
+                                  (BuildContext context,
+                                      BoxConstraints constraints) {
+                                return AbsorbPointer(
+                                  absorbing: isGameEnded,
+                                  child: Stack(
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: renderBoard(constraints),
+                                      ),
+                                      BackdropFilter(
+                                        filter: isGameEnded
+                                            ? ImageFilter.blur(
+                                                sigmaX: 10, sigmaY: 10)
+                                            : ImageFilter.blur(
+                                                sigmaX: 0, sigmaY: 0),
+                                        child: Container(
+                                          width: double.infinity,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              }),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  );
-                }),
-              )
-            ],
-          ),
-        ),
+                  ],
+                ),
+                AnimatedOpacity(
+                  opacity: isGameEnded ? 1 : 0,
+                  duration: Duration(seconds: 1),
+                  child: Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Circle won",
+                          style: TextStyle(
+                              color: ThemeColors.themeSecondaryLight,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 30),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: ThemeColors.themePrimaryDark),
+                            onPressed: () {
+                              startGame();
+                            },
+                            child: Text("Start Again"))
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            )),
       ),
     );
   }
