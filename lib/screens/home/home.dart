@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:tic_tac_toe/components/app_header/app_header.dart';
+import 'package:tic_tac_toe/components/circle/circle.dart';
+import 'package:tic_tac_toe/components/cross/cross.dart';
 import 'package:tic_tac_toe/components/tic_item/tic_item.dart';
 import 'package:tic_tac_toe/config/theme_colors.dart';
 
@@ -99,41 +101,48 @@ class _HomeState extends State<Home> {
     }
 
     void win() {
-      // showDialog(
-      //     context: context,
-      //     builder: (BuildContext context) {
-      //       return Dialog(
-      //         insetAnimationDuration: Duration(milliseconds: 50000),
-      //         child: Container(width: 50, height: 50, color: Colors.white),
-      //       );
-      //     });
-      // Alert(
-      //   style: AlertStyle(animationType: AnimationType.grow),
-      //   context: context,
-      //   type: AlertType.success,
-      //   title: currentPlayer + " won",
-      //   buttons: [
-      //     DialogButton(
-      //       child: Text(
-      //         "Restart game",
-      //         style: TextStyle(color: Colors.white, fontSize: 16),
-      //       ),
-      //       onPressed: () {
-      //         startGame();
-      //         Navigator.pop(context);
-      //       },
-      //       width: 120,
-      //     )
-      //   ],
-      // ).show();
-
       setState(() {
         wonPlayer = currentPlayer;
         isGameEnded = true;
       });
     }
 
+    void draw() {
+      setState(() {
+        wonPlayer = "draw";
+        isGameEnded = true;
+      });
+    }
+
+    bool checkDrawState() {
+      bool isDrawn = true;
+
+      for (int i = 0; i < board.length; i++) {
+        List items = board[i];
+
+        for (int j = 0; j < items.length; j++) {
+          if (items[j] == null) {
+            isDrawn = false;
+            break;
+          }
+        }
+
+        if (!isDrawn) {
+          break;
+        }
+      }
+
+      return isDrawn;
+    }
+
     void checkWinningState() {
+      final isDraw = checkDrawState();
+
+      if (isDraw) {
+        draw();
+        return;
+      }
+
       for (int i = 0; i < winningConditions.length; i++) {
         List element = winningConditions[i];
 
@@ -242,6 +251,43 @@ class _HomeState extends State<Home> {
       return finalItems;
     }
 
+    Widget renderWhoWon() {
+      if (wonPlayer == "draw") {
+        return Text(
+          'Draw',
+          style: TextStyle(
+              color: ThemeColors.themeSecondaryLight,
+              fontWeight: FontWeight.bold,
+              fontSize: 30),
+        );
+      }
+
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 50,
+            height: 50,
+            child: wonPlayer == "circle"
+                ? Circle(
+                    stroke: 2,
+                  )
+                : Cross(
+                    stroke: 2,
+                  ),
+          ),
+          Text(
+            "won",
+            style: TextStyle(
+                color: ThemeColors.themeSecondaryLight,
+                fontWeight: FontWeight.bold,
+                fontSize: 30),
+          )
+        ],
+      );
+    }
+
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -303,22 +349,14 @@ class _HomeState extends State<Home> {
                     ),
                   ],
                 ),
-                AnimatedOpacity(
-                  opacity: isGameEnded ? 1 : 0,
-                  duration: Duration(seconds: 1),
-                  child: Container(
+                if (isGameEnded)
+                  Container(
                     width: double.infinity,
                     height: double.infinity,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          "Circle won",
-                          style: TextStyle(
-                              color: ThemeColors.themeSecondaryLight,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 30),
-                        ),
+                        renderWhoWon(),
                         SizedBox(
                           height: 10,
                         ),
@@ -331,8 +369,7 @@ class _HomeState extends State<Home> {
                             child: Text("Start Again"))
                       ],
                     ),
-                  ),
-                )
+                  )
               ],
             )),
       ),
